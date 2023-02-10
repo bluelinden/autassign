@@ -1,9 +1,14 @@
+/* eslint-disable max-len */
 // Delligator by Blue Linden
 // © 2023 Blue Linden
 // The sole licensee with commercial rights is The Verdict; All other entities using this
 // system must use it in a non commercial manner, as per CC BY-NC-SA.
-/* eslint-disable max-len */
 
+
+/**
+ * Gets the current selected row on the web
+ * @return {number} row
+ */
 function getCurrentWebRow() {
   const sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the current spreadsheet and dump it into an object
   const active = sheet.getActiveSheet();
@@ -19,15 +24,21 @@ function getCurrentWebRow() {
   return row; // return the row number
 }
 
+/**
+ * Gets the article from a specified row
+ * @param {number} rowNum
+ * @return {object} article
+ */
 function getArticleObject(rowNum) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the current spreadsheet and dump it into an object
 
   const article = {}; // define the article object
+  let schema; // define the schema variable
   if (CacheService.getScriptCache().get('articleSchema')) { // if the article schema is cached
-    var schema = CacheService.getScriptCache().get('articleSchema').split(','); // get the article schema from the cache
+    schema = CacheService.getScriptCache().get('articleSchema').split(','); // get the article schema from the cache
   } else {
-    const schemaStr = sheet.getRangeByName('articleSchema').getValue(); // get the article schema from the sheet
-    var schema = schemaStr.split(','); // split the schema into an array
+    schemaStr = sheet.getRangeByName('articleSchema').getValue(); // get the article schema from the sheet
+    schema = schemaStr.split(','); // split the schema into an array
     CacheService.getScriptCache().put('articleSchema', schema.toString(), 21600); // cache the schema for 6 hours
   }
 
@@ -70,7 +81,7 @@ function getArticleObject(rowNum) {
 
 /**
  *
- * @returns {object} jobs
+ * @return {object} jobs
  */
 function fetchUserObjects() {
   const sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the current spreadsheet and dump it into an object
@@ -87,7 +98,7 @@ function fetchUserObjects() {
   const userData = rawUserDataArray.filter((e) => e.length); // filter out the empty rows
   const users = []; // define the users array
   userData.forEach((element) => { // for each user in the user data,
-    let user = userArrayToObject(schema, element); // convert the array into an object
+    const user = userArrayToObject(schema, element); // convert the array into an object
     if (user.name) { // if the user has a name,
       users.push(user); // push the user into the users array
     }
@@ -153,7 +164,7 @@ function assignPositionToRow(row, position) {
   }
   // pop up a dialog box with the top users, allowing you to pick one
   const ui = SpreadsheetApp.getUi();
-  const result = ui.dialog('Assigning ' + position + ' to ' + article.name, 'The top users are ' + getUsrStr(topUser) + ', ' + getUsrStr(secondUser) + ', ' + getUsrStr(thirdUser) + ', and ' + getUsrStr(fourthUser) + '. Who should be assigned? Type a number 1-4 or 0 to cancel.', ui.ButtonSet.OK_CANCEL);
+  const result = ui.dialog('Assigning ' + position + ' to ' + article.name, 'The top users are ' + getUserStr(topUser) + ', ' + getUserStr(secondUser) + ', ' + getUserStr(thirdUser) + ', and ' + getUserStr(fourthUser) + '. Who should be assigned? Type a number 1-4 or 0 to cancel.', ui.ButtonSet.OK_CANCEL);
   // Process the user's response.
   const button = result.getSelectedButton();
   const text = result.getResponseText();
@@ -192,40 +203,50 @@ function assignPositionToRow(row, position) {
  * @return {array}
  */
 function calculateScores(job, article, userArray, jobArray) {
-  function countJobs(jobArray) { // count the jobs of each type present in the Job Array
-  const jobs = {}; // create a jobs object
-  jobs.transfer = []; // create an array for transfer jobs
-  jobs.art = []; // create an array for art jobs
-  jobs.verify = []; // create an array for verification jobs
-  jobs.publish = []; // create an array for publication jobs
-
-  jobs.jobCount = jobArray.length * 4; // calculate the total number of jobs loosely by multiplying the number of articles by 4
-
-  jobArray.forEach((element) => { // for each article in the job array,
-    jobs.transfer.push({'name': element.transfer, 'done': element.transferDone}); // add the transfer status to the transfer array
-    jobs.art.push({'name': element.art, 'done': element.artDone}); // add the art status to the art array
-    jobs.verify.push({'name': element.verify, 'done': element.verifyDone}); // add the verification status to the verification array
-    jobs.publish.push({'name': element.publish, 'done': element.publishDone}); // add the publication status to the publication array
-  });
+  /**
+   *
+   * @param {*} jobArray
+   * @return {object}
+   */
   function countJobs(jobArray) { // count the jobs of each type present in the Job Array
     const jobs = {}; // create a jobs object
     jobs.transfer = []; // create an array for transfer jobs
     jobs.art = []; // create an array for art jobs
     jobs.verify = []; // create an array for verification jobs
     jobs.publish = []; // create an array for publication jobs
-  
+
     jobs.jobCount = jobArray.length * 4; // calculate the total number of jobs loosely by multiplying the number of articles by 4
-  
+
     jobArray.forEach((element) => { // for each article in the job array,
       jobs.transfer.push({'name': element.transfer, 'done': element.transferDone}); // add the transfer status to the transfer array
       jobs.art.push({'name': element.art, 'done': element.artDone}); // add the art status to the art array
       jobs.verify.push({'name': element.verify, 'done': element.verifyDone}); // add the verification status to the verification array
       jobs.publish.push({'name': element.publish, 'done': element.publishDone}); // add the publication status to the publication array
     });
+
+    /**
+     * @param {array} jobArray
+     * @return {object}
+     */
+    function countJobs(jobArray) { // count the jobs of each type present in the Job Array
+      const jobs = {}; // create a jobs object
+      jobs.transfer = []; // create an array for transfer jobs
+      jobs.art = []; // create an array for art jobs
+      jobs.verify = []; // create an array for verification jobs
+      jobs.publish = []; // create an array for publication jobs
+
+      jobs.jobCount = jobArray.length * 4; // calculate the total number of jobs loosely by multiplying the number of articles by 4
+
+      jobArray.forEach((element) => { // for each article in the job array,
+        jobs.transfer.push({'name': element.transfer, 'done': element.transferDone}); // add the transfer status to the transfer array
+        jobs.art.push({'name': element.art, 'done': element.artDone}); // add the art status to the art array
+        jobs.verify.push({'name': element.verify, 'done': element.verifyDone}); // add the verification status to the verification array
+        jobs.publish.push({'name': element.publish, 'done': element.publishDone}); // add the publication status to the publication array
+      });
+      return jobs; // return the jobs object
+    }
     return jobs; // return the jobs object
   }
-  return jobs; // return the jobs object
-}
   const jobs = countJobs(jobArray); // count the jobs present in the Job Array
   const users = userArray.slice(); // copy the user array so that we don't modify the original
   let user = {}; // create a user variable so that the code doesn't get confusing with two 'element' variables
@@ -263,12 +284,14 @@ function calculateScores(job, article, userArray, jobArray) {
 }
 
 
-
+/**
+ *
+ * @param {number} runRow
+ */
 function clearAll(runRow) { // clear all assignments of run
   const sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the active spreadsheet
   const website = sheet.getSheetByName('Website'); // get the website sheet
   const assignColumnStart = 'Q'; const assignColumnEnd = 'X'; // set the start and end columns for the assignment columns
-  const assignColumn = assignColumnStart + ':' + assignColumnEnd; // set the assignment column range
   const rawIssueColumn = website.getRange(issueColumn + '1:' + issueColumn + website.getLastRow()).getValues();
   const issueColumnData = [];
   rawIssueColumn.forEach((element) => {
@@ -279,23 +302,39 @@ function clearAll(runRow) { // clear all assignments of run
   website.getRange(assignRange).clearContent(); // clear the assignment range
 }
 
+/**
+ * Note: This function is a wrapper for assignPositionToRow. It is used to assign transfer to the current row.
+ */
 function assignTransfer() { // assign transfer
   assignPositionToRow(getCurrentWebRow(), 'transfer'); // assign the transfer position to the current row
 }
 
+/**
+ * Note: This function is a wrapper for assignPositionToRow. It is used to assign art to the current row.
+ */
 function assignArt() { // assign art
   assignPositionToRow(getCurrentWebRow(), 'art'); // assign the art position to the current row
 }
 
+/**
+ * Note: This function is a wrapper for assignPositionToRow. It is used to assign verification to the current row.
+ */
 function assignVerify() { // assign verification
   assignPositionToRow(getCurrentWebRow(), 'verify'); // assign the verification position to the current row
 }
 
+/**
+ * Note: This function is a wrapper for assignPositionToRow. It is used to assign publication to the current row.
+ */
 function assignPublish() { // assign publication
   assignPositionToRow(getCurrentWebRow(), 'publish'); // assign the publication position to the current row
 }
 
-
+/**
+ * @param {number} row
+ * Gets the jobs for the current run.
+ * @return {array}
+ */
 function getJobsForRun(row) {
   row = 12;
   const issueColumn = 'K';
@@ -325,11 +364,17 @@ function getJobsForRun(row) {
 
 // MISC FUNCTIONS
 
+/**
+ * Destroy article schema cache
+ */
 function destroyArticleSchemaCache() {
   CacheService.getScriptCache().remove('articleSchema');
   toast('Article schema purged. On next run it will be pulled again.');
 }
 
+/**
+ * Destroy user schema cache
+ */
 function destroyUserSchemaCache() {
   CacheService.getScriptCache().remove('userSchema');
   toast('User schema purged. On next run it will be pulled again.');
