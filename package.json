@@ -1,0 +1,23 @@
+{
+  "name": "juryduty",
+  "version": "0.9.0",
+  "description": "The \"Assign\" functionality on the Verdict's Publication List",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bluelinden/juryduty.git"
+  },
+  "author": "Blue Linden",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bluelinden/juryduty/issues"
+  },
+  "homepage": "https://github.com/bluelinden/juryduty#readme",
+  "devDependencies": {
+    "eslint": "^8.33.0",
+    "eslint-config-google": "^0.14.0"
+  }
+}
