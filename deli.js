@@ -21,27 +21,28 @@ function getCurrentWebRow() {
   function getArticleObject(rowNum) {
     var sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the current spreadsheet and dump it into an object
   
-    var article = {}
-    if (CacheService.getScriptCache().get('articleSchema')) {
-      var schema = CacheService.getScriptCache().get('articleSchema').split(',');
+    var article = {} // define the article object
+    if (CacheService.getScriptCache().get('articleSchema')) { // if the article schema is cached
+      var schema = CacheService.getScriptCache().get('articleSchema').split(','); // get the article schema from the cache
     } else {
-      var schemaStr = sheet.getRangeByName('articleSchema').getValue();
-      var schema = schemaStr.split(',');
-      CacheService.getScriptCache().put('articleSchema', schema.toString(), 21600);
+      var schemaStr = sheet.getRangeByName('articleSchema').getValue(); // get the article schema from the sheet
+      var schema = schemaStr.split(','); // split the schema into an array
+      CacheService.getScriptCache().put('articleSchema', schema.toString(), 21600); // cache the schema for 6 hours
     }
   
   
     // just define everything
-    article.diff = {}
+    article.diff = {} 
     article.transfer = {}
     article.art = {}
     article.verify = {}
     article.publish = {}
   
-    var rawArticleDataArray = sheet.getRange("J" + rowNum + ":AB" + rowNum).getValues();
-    var rawArticleData = rawArticleDataArray[0];
-    var articleData = articleArrayToObject(schema, rawArticleData);
-    article.row = rowNum;
+    var rawArticleDataArray = sheet.getRange("J" + rowNum + ":AB" + rowNum).getValues(); // get the article data from the sheet
+    var rawArticleData = rawArticleDataArray[0]; // dump the array that is nested within into a variable
+    var articleData = articleArrayToObject(schema, rawArticleData); // convert the array into an object
+
+    article.row = rowNum; // article row
   
     article.name = articleData.name; // article name
     article.authors = articleData.author; // article authors
@@ -63,36 +64,32 @@ function getCurrentWebRow() {
     article.verify.isDone = articleData.verificationDone; // article verify status
     article.publish.isDone = articleData.publicationDone; // article publish status
   
-    return article;
+    return article; // return the article object
   }
   
   function fetchUserObjects() {
     var sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the current spreadsheet and dump it into an object
-    var users = {}
+    var users = {} // define the users object
   
-    if (CacheService.getScriptCache().get('userSchema')) {
-      var schema = CacheService.getScriptCache().get('userSchema').split(',');
+    if (CacheService.getScriptCache().get('userSchema')) { // if the user schema is cached
+      var schema = CacheService.getScriptCache().get('userSchema').split(','); // get the user schema from the cache
     } else {
-      var schemaStr = sheet.getRangeByName('userSchema').getValue();
-      var schema = schemaStr.split(',');
-      CacheService.getScriptCache().put('userSchema', schema.toString(), 21600);
+      var schemaStr = sheet.getRangeByName('userSchema').getValue(); // get the user schema from the sheet
+      var schema = schemaStr.split(','); // split the schema into an array
+      CacheService.getScriptCache().put('userSchema', schema.toString(), 21600); // cache the schema for 6 hours
     }
   
-    var rawUserDataArray = sheet.getRange("'Web Team'!A2:P1000").getValues();
-    var userData = rawUserDataArray.filter(e => e.length);
-    var users = []
-    userData.forEach((element) => {
-      var user = userArrayToObject(schema, element);
-      if (user.name) {
-        users.push(user);
+    var rawUserDataArray = sheet.getRange("'Web Team'!A2:P1000").getValues(); // get the user data from the sheet
+    var userData = rawUserDataArray.filter(e => e.length); // filter out the empty rows
+    var users = [] // define the users array
+    userData.forEach((element) => { // for each user in the user data,
+      var user = userArrayToObject(schema, element); // convert the array into an object
+      if (user.name) { // if the user has a name,
+        users.push(user); // push the user into the users array
       }
     })
   
-    return users;
-  }
-  
-  function grabUsers() {
-  
+    return users; // return the users array
   }
   
   function grabStatistics() {
@@ -113,11 +110,14 @@ function getCurrentWebRow() {
   
   function assignPositionToRow(row, position) {
   
-    var article = getArticleObject(row);
-    var jobs = getJobsForRun(row);
-    var users = fetchUserObjects();
-    var scores = calculateScores(position, article, users, jobs);
-    scores.sort( compareScores );
+    var article = getArticleObject(row); // get the article object
+    var jobs = getJobsForRun(row); // get the jobs for the run
+    var users = fetchUserObjects(); // get the user objects
+    var scores = calculateScores(position, article, users, jobs); // calculate the scores for each user
+    function compareScores(item1, item2) {
+        
+    }
+    scores.sort( compareScores ); // sort the scores
     // get the user with the highest object score
     var user = scores[0].name;
     // assign the user to the article
@@ -172,33 +172,45 @@ function getCurrentWebRow() {
   
     jobs.jobCount = jobArray.length * 4 // calculate the total number of jobs loosely by multiplying the number of articles by 4
   
-    jobArray.forEach((element) => { // for each job in the job array,
-      jobs.transfer.push({ "name": element.transfer, "done": element.transferDone }); // add the transfer job to the transfer array
-      jobs.art.push({ "name": element.art, "done": element.artDone });
-      jobs.verify.push({ "name": element.verify, "done": element.verifyDone });
-      jobs.publish.push({ "name": element.publish, "done": element.publishDone });
+    jobArray.forEach((element) => { // for each article in the job array,
+      jobs.transfer.push({ "name": element.transfer, "done": element.transferDone }); // add the transfer status to the transfer array
+      jobs.art.push({ "name": element.art, "done": element.artDone }); // add the art status to the art array
+      jobs.verify.push({ "name": element.verify, "done": element.verifyDone }); // add the verification status to the verification array
+      jobs.publish.push({ "name": element.publish, "done": element.publishDone }); // add the publication status to the publication array
     })
-    return jobs;
+    return jobs; // return the jobs object
   }
   
-  function clearAll() {
+  function clearAll(runRow) { // clear all assignments of run
+    var sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the active spreadsheet
+    var website = sheet.getSheetByName("Website"); // get the website sheet
+    var assignColumnStart = "Q", assignColumnEnd = "X" // set the start and end columns for the assignment columns
+    var assignColumn = assignColumnStart + ":" + assignColumnEnd; // set the assignment column range
+    var rawIssueColumn = website.getRange(issueColumn + "1:" + issueColumn + website.getLastRow()).getValues();
+    var issueColumnData = []
+    rawIssueColumn.forEach((element) => {
+      issueColumnData.push(element[0]);
+    });
+    var run = contiguousRange(issueColumnData, runRow - 1);
+    var assignRange = assignColumnStart + (run.start + 1) + assignColumnEnd + (run.end + 1); // set the assignment range to clear 
+    website.getRange(assignRange).clearContent(); // clear the assignment range
   
   }
   
-  function assignTransfer() {
-    assignPositionToRow(getCurrentWebRow(), "transfer");
+  function assignTransfer() { // assign transfer
+    assignPositionToRow(getCurrentWebRow(), "transfer"); // assign the transfer position to the current row
   }
   
-  function assignArt() {
-    assignPositionToRow(getCurrentWebRow(), "art");
+  function assignArt() { // assign art
+    assignPositionToRow(getCurrentWebRow(), "art"); // assign the art position to the current row
   }
   
-  function assignVerify() {
-    assignPositionToRow(getCurrentWebRow(), "verify");
+  function assignVerify() { // assign verification
+    assignPositionToRow(getCurrentWebRow(), "verify"); // assign the verification position to the current row
   }
   
-  function assignPublish() {
-    assignPositionToRow(getCurrentWebRow(), "publish");
+  function assignPublish() { // assign publication
+    assignPositionToRow(getCurrentWebRow(), "publish"); // assign the publication position to the current row
   }
   
   
