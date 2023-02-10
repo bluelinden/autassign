@@ -118,59 +118,62 @@ function getCurrentWebRow() {
     var users = fetchUserObjects();
     var scores = calculateScores(position, article, users, jobs);
     scores.sort( compareScores );
-    console.log("winner:", JSON.stringify(winningStaff))
-    SpreadsheetApp.getActiveSpreadsheet().toast('The winner is ' + winningStaff.name + '! With ' + winningStaff.score + ' points!', 'Winner', -1);
+    // get the user with the highest object score
+    var user = scores[0].name;
+    // assign the user to the article
+
+
     console.info("article:", JSON.stringify(article));
   }
   
   function calculateScores(job, article, userArray, jobArray) {
-    var jobs = countJobs(jobArray);
-    var users = userArray.slice();
-    var user
+    var jobs = countJobs(jobArray); // count the jobs present in the Job Array
+    var users = userArray.slice(); // copy the user array so that we don't modify the original
+    var user = {} // create a user variable so that the code doesn't get confusing with two 'element' variables
     users.forEach((element, index) => { // for each user in our system,
-      user = element // create a user variable so that the code doesn't get confusing with two 'element' variables
-      user.jobCount = -100 // set the amount of jobs each user has to zero
-      jobs[job].forEach((element) => { // for each job, grab 
-        var jobInQuestion = element
-        if (user.name == jobInQuestion.name) {
-          user.jobCount++
+      user = element // update the variable for each user
+      user.jobCount = 0 // set the amount of jobs each user has to zero
+      jobs[job].forEach((element) => { // for each job, check if the user has it
+        var jobInQuestion = element // create a variable for the job so that the code doesn't get confusing
+        if (user.name == jobInQuestion.name) { // if the user has the job,
+          user.jobCount++ // add one to the job count
         }
       })
   
-      user.jobScore = 1 - ((user.jobCount * 6) / jobs.jobCount)
-      user.diffScore = (user.skill / 100) - (article.diff.number / 15)
-      user.score = 100 * (user.jobScore + (0.08 * user.diffScore))
+      user.jobScore = 1 - ((user.jobCount * 6) / jobs.jobCount) // calculate the job score
+      user.diffScore = (user.skill / 100) - (article.diff.number / 15) // calculate the difficulty score
+      user.score = 100 * (user.jobScore + (0.08 * user.diffScore)) // calculate the total score
   
-      if ((article.diff.code.includes('L') && !user.doesWebLayout)
-        || (article.diff.code.includes('I') && !user.doesArticleArt)
-        || (article.diff.code.includes('T') && !user.doesWebTech)) {
-        user.score = user.score - 30
+      if ((article.diff.code.includes('L') && !user.doesWebLayout) // if the article has complex layout and the user doesn't do layout
+        || (article.diff.code.includes('I') && !user.doesArticleArt) // if the article requires images and the user doesn't do art
+        || (article.diff.code.includes('T') && !user.doesWebTech)) { // if the article requires technical knowledge and the user doesn't do tech
+        user.score = user.score - 30 // subtract 30 points from the user's score
       }
   
   
-      if ((job == "transfer" && !element.canTransfer)
-        || (job == "art" && !element.doesArticleArt)
-        || (job == "verify" && !element.canVerify)
-        || (job == "publish" && !element.canPublish)) {
-        user.score = 0
+      if ((job == "transfer" && !element.canTransfer) // if the user can't do article transfers
+        || (job == "art" && !element.doesArticleArt) // if the user can't do article art
+        || (job == "verify" && !element.canVerify) // if the user can't do article verification
+        || (job == "publish" && !element.canPublish)) { // if the user can't do article publication
+        user.score = 0 // set the user's score to zero
       }
   
-      console.info("user", user.name, "jobscore", user.jobScore, "jobcount", user.jobCount, "jobstotal", jobs.jobCount, "diff", user.diffScore, "score", user.score);
+      console.info("user", user.name, "jobscore", user.jobScore, "jobcount", user.jobCount, "jobstotal", jobs.jobCount, "diff", user.diffScore, "score", user.score); // log the user's score and other details
     })
-    return users;
+    return users; // return the users array
   }
   
-  function countJobs(jobArray) {
-    var jobs = {}
-    jobs.transfer = []
-    jobs.art = []
-    jobs.verify = []
-    jobs.publish = []
+  function countJobs(jobArray) { // count the jobs of each type present in the Job Array
+    var jobs = {} // create a jobs object
+    jobs.transfer = [] // create an array for transfer jobs
+    jobs.art = [] // create an array for art jobs
+    jobs.verify = [] // create an array for verification jobs
+    jobs.publish = [] // create an array for publication jobs
   
-    jobs.jobCount = jobArray.length * 4
+    jobs.jobCount = jobArray.length * 4 // calculate the total number of jobs loosely by multiplying the number of articles by 4
   
-    jobArray.forEach((element) => {
-      jobs.transfer.push({ "name": element.transfer, "done": element.transferDone });
+    jobArray.forEach((element) => { // for each job in the job array,
+      jobs.transfer.push({ "name": element.transfer, "done": element.transferDone }); // add the transfer job to the transfer array
       jobs.art.push({ "name": element.art, "done": element.artDone });
       jobs.verify.push({ "name": element.verify, "done": element.verifyDone });
       jobs.publish.push({ "name": element.publish, "done": element.publishDone });
