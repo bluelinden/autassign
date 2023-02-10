@@ -69,23 +69,23 @@ function getArticleObject(rowNum) {
 }
 
 /**
- * 
+ *
  * @returns {object} jobs
  */
 function fetchUserObjects() {
   const sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the current spreadsheet and dump it into an object
-
+  let schema; // define the schema variable
   if (CacheService.getScriptCache().get('userSchema')) { // if the user schema is cached
-    const schema = CacheService.getScriptCache().get('userSchema').split(','); // get the user schema from the cache
+    schema = CacheService.getScriptCache().get('userSchema').split(','); // get the user schema from the cache
   } else {
     const schemaStr = sheet.getRangeByName('userSchema').getValue(); // get the user schema from the sheet
-    const schema = schemaStr.split(','); // split the schema into an array
+    schema = schemaStr.split(','); // split the schema into an array
     CacheService.getScriptCache().put('userSchema', schema.toString(), 21600); // cache the schema for 6 hours
   }
 
   const rawUserDataArray = sheet.getRange('\'Web Team\'!A2:P1000').getValues(); // get the user data from the sheet
   const userData = rawUserDataArray.filter((e) => e.length); // filter out the empty rows
-  let users = []; // define the users array
+  const users = []; // define the users array
   userData.forEach((element) => { // for each user in the user data,
     let user = userArrayToObject(schema, element); // convert the array into an object
     if (user.name) { // if the user has a name,
@@ -96,19 +96,18 @@ function fetchUserObjects() {
   return users; // return the users array
 }
 
-function grabStatistics() {
+/**
+ * @param {number} row
+ */
+function assignAllThis(row) {
 
 }
 
-function updateUserModel() {
-
-}
-
-function assignAllThis() {
-
-}
-
-function assignAllEvery() {
+/**
+ *
+ * @param {number} row
+ */
+function assignAllEvery(row) {
 
 }
 
@@ -122,6 +121,12 @@ function assignPositionToRow(row, position) {
   const jobs = getJobsForRun(row); // get the jobs for the run
   const users = fetchUserObjects(); // get the user objects
   const scores = calculateScores(position, article, users, jobs); // calculate the scores for each user
+  /**
+   * @param {object} item1
+   * @param {object} item2
+   * @return {number}
+   * @description compare the scores of two objects
+   */
   function compareScores(item1, item2) {
     if (item1.score > item2.score) {
       return -1;
@@ -133,14 +138,94 @@ function assignPositionToRow(row, position) {
   }
   scores.sort( compareScores ); // sort the scores
   // get the user with the highest object score
-  const user = scores[0].name;
-  // assign the user to the article
+  const topUser = scores[0];
+  const secondUser = scores[1];
+  const thirdUser = scores[2];
+  const fourthUser = scores[3];
 
+  /**
+   *
+   * @param {object} user
+   * @return {string}
+   */
+  function getUserStr(user) {
+    return user.name + ' ( with' + user.score + ' points and ' + user.jobCount + ' jobs)';
+  }
+  // pop up a dialog box with the top users, allowing you to pick one
+  const ui = SpreadsheetApp.getUi();
+  const result = ui.dialog('Assigning ' + position + ' to ' + article.name, 'The top users are ' + getUsrStr(topUser) + ', ' + getUsrStr(secondUser) + ', ' + getUsrStr(thirdUser) + ', and ' + getUsrStr(fourthUser) + '. Who should be assigned? Type a number 1-4 or 0 to cancel.', ui.ButtonSet.OK_CANCEL);
+  // Process the user's response.
+  const button = result.getSelectedButton();
+  const text = result.getResponseText();
+  if (button == ui.Button.OK) {
+    // User clicked "OK".
+    if (text == '1') {
+      assignUserToArticle(topUser, article, position);
+    } else if (text == '2') {
+      assignUserToArticle(secondUser, article, position);
+    } else if (text == '3') {
+      assignUserToArticle(thirdUser, article, position);
+    } else if (text == '4') {
+      assignUserToArticle(fourthUser, article, position);
+    } else if (text == '0') {
+      // do nothing
+    } else {
+      ui.alert('Invalid input. Please try again.');
+    }
+  } else if (button == ui.Button.CANCEL) {
+    // User clicked "Cancel".
+    ui.alert('Assignment cancelled.');
+  } else if (button == ui.Button.CLOSE) {
+    // User clicked X in the title bar.
+    ui.alert('Assignment cancelled.');
+  }
 
   console.info('article:', JSON.stringify(article));
 }
 
+/**
+ *
+ * @param {*} job
+ * @param {*} article
+ * @param {*} userArray
+ * @param {*} jobArray
+ * @return {array}
+ */
 function calculateScores(job, article, userArray, jobArray) {
+  function countJobs(jobArray) { // count the jobs of each type present in the Job Array
+  const jobs = {}; // create a jobs object
+  jobs.transfer = []; // create an array for transfer jobs
+  jobs.art = []; // create an array for art jobs
+  jobs.verify = []; // create an array for verification jobs
+  jobs.publish = []; // create an array for publication jobs
+
+  jobs.jobCount = jobArray.length * 4; // calculate the total number of jobs loosely by multiplying the number of articles by 4
+
+  jobArray.forEach((element) => { // for each article in the job array,
+    jobs.transfer.push({'name': element.transfer, 'done': element.transferDone}); // add the transfer status to the transfer array
+    jobs.art.push({'name': element.art, 'done': element.artDone}); // add the art status to the art array
+    jobs.verify.push({'name': element.verify, 'done': element.verifyDone}); // add the verification status to the verification array
+    jobs.publish.push({'name': element.publish, 'done': element.publishDone}); // add the publication status to the publication array
+  });
+  function countJobs(jobArray) { // count the jobs of each type present in the Job Array
+    const jobs = {}; // create a jobs object
+    jobs.transfer = []; // create an array for transfer jobs
+    jobs.art = []; // create an array for art jobs
+    jobs.verify = []; // create an array for verification jobs
+    jobs.publish = []; // create an array for publication jobs
+  
+    jobs.jobCount = jobArray.length * 4; // calculate the total number of jobs loosely by multiplying the number of articles by 4
+  
+    jobArray.forEach((element) => { // for each article in the job array,
+      jobs.transfer.push({'name': element.transfer, 'done': element.transferDone}); // add the transfer status to the transfer array
+      jobs.art.push({'name': element.art, 'done': element.artDone}); // add the art status to the art array
+      jobs.verify.push({'name': element.verify, 'done': element.verifyDone}); // add the verification status to the verification array
+      jobs.publish.push({'name': element.publish, 'done': element.publishDone}); // add the publication status to the publication array
+    });
+    return jobs; // return the jobs object
+  }
+  return jobs; // return the jobs object
+}
   const jobs = countJobs(jobArray); // count the jobs present in the Job Array
   const users = userArray.slice(); // copy the user array so that we don't modify the original
   let user = {}; // create a user variable so that the code doesn't get confusing with two 'element' variables
@@ -177,23 +262,7 @@ function calculateScores(job, article, userArray, jobArray) {
   return users; // return the users array
 }
 
-function countJobs(jobArray) { // count the jobs of each type present in the Job Array
-  const jobs = {}; // create a jobs object
-  jobs.transfer = []; // create an array for transfer jobs
-  jobs.art = []; // create an array for art jobs
-  jobs.verify = []; // create an array for verification jobs
-  jobs.publish = []; // create an array for publication jobs
 
-  jobs.jobCount = jobArray.length * 4; // calculate the total number of jobs loosely by multiplying the number of articles by 4
-
-  jobArray.forEach((element) => { // for each article in the job array,
-    jobs.transfer.push({'name': element.transfer, 'done': element.transferDone}); // add the transfer status to the transfer array
-    jobs.art.push({'name': element.art, 'done': element.artDone}); // add the art status to the art array
-    jobs.verify.push({'name': element.verify, 'done': element.verifyDone}); // add the verification status to the verification array
-    jobs.publish.push({'name': element.publish, 'done': element.publishDone}); // add the publication status to the publication array
-  });
-  return jobs; // return the jobs object
-}
 
 function clearAll(runRow) { // clear all assignments of run
   const sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the active spreadsheet
