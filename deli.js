@@ -107,20 +107,21 @@ function fetchUserObjects() {
   return users; // return the users array
 }
 
-/**
- * @param {number} row
- */
-function assignAllThis(row) {
 
-}
+// /**
+//  * @param {number} row
+//  */
+// function assignAllThis(row) {
 
-/**
- *
- * @param {number} row
- */
-function assignAllEvery(row) {
+// }
 
-}
+// /**
+//  *
+//  * @param {number} row
+//  */
+// function assignAllEvery(row) {
+
+// }
 
 /**
  *
@@ -185,10 +186,10 @@ function assignPositionToRow(row, position) {
     }
   } else if (button == ui.Button.CANCEL) {
     // User clicked "Cancel".
-    ui.alert('Assignment cancelled.');
+    throw new Error('Assignment cancelled.');
   } else if (button == ui.Button.CLOSE) {
     // User clicked X in the title bar.
-    ui.alert('Assignment cancelled.');
+    throw new Error('Assignment cancelled.');
   }
 
   console.info('article:', JSON.stringify(article));
@@ -223,28 +224,6 @@ function calculateScores(job, article, userArray, jobArray) {
       jobs.verify.push({'name': element.verify, 'done': element.verifyDone}); // add the verification status to the verification array
       jobs.publish.push({'name': element.publish, 'done': element.publishDone}); // add the publication status to the publication array
     });
-
-    /**
-     * @param {array} jobArray
-     * @return {object}
-     */
-    function countJobs(jobArray) { // count the jobs of each type present in the Job Array
-      const jobs = {}; // create a jobs object
-      jobs.transfer = []; // create an array for transfer jobs
-      jobs.art = []; // create an array for art jobs
-      jobs.verify = []; // create an array for verification jobs
-      jobs.publish = []; // create an array for publication jobs
-
-      jobs.jobCount = jobArray.length * 4; // calculate the total number of jobs loosely by multiplying the number of articles by 4
-
-      jobArray.forEach((element) => { // for each article in the job array,
-        jobs.transfer.push({'name': element.transfer, 'done': element.transferDone}); // add the transfer status to the transfer array
-        jobs.art.push({'name': element.art, 'done': element.artDone}); // add the art status to the art array
-        jobs.verify.push({'name': element.verify, 'done': element.verifyDone}); // add the verification status to the verification array
-        jobs.publish.push({'name': element.publish, 'done': element.publishDone}); // add the publication status to the publication array
-      });
-      return jobs; // return the jobs object
-    }
     return jobs; // return the jobs object
   }
   const jobs = countJobs(jobArray); // count the jobs present in the Job Array
@@ -285,10 +264,10 @@ function calculateScores(job, article, userArray, jobArray) {
 
 
 /**
- *
+ * Clear all assignments for a given row-run.
  * @param {number} runRow
  */
-function clearAll(runRow) { // clear all assignments of run
+function clearAll(runRow) { // eslint-disable-line no-unused-vars
   const sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the active spreadsheet
   const website = sheet.getSheetByName('Website'); // get the website sheet
   const assignColumnStart = 'Q'; const assignColumnEnd = 'X'; // set the start and end columns for the assignment columns
@@ -305,28 +284,28 @@ function clearAll(runRow) { // clear all assignments of run
 /**
  * Note: This function is a wrapper for assignPositionToRow. It is used to assign transfer to the current row.
  */
-function assignTransfer() { // assign transfer
+function assignTransfer() { // eslint-disable-line no-unused-vars
   assignPositionToRow(getCurrentWebRow(), 'transfer'); // assign the transfer position to the current row
 }
 
 /**
  * Note: This function is a wrapper for assignPositionToRow. It is used to assign art to the current row.
  */
-function assignArt() { // assign art
+function assignArt() { // eslint-disable-line no-unused-vars
   assignPositionToRow(getCurrentWebRow(), 'art'); // assign the art position to the current row
 }
 
 /**
  * Note: This function is a wrapper for assignPositionToRow. It is used to assign verification to the current row.
  */
-function assignVerify() { // assign verification
+function assignVerify() { // eslint-disable-line no-unused-vars
   assignPositionToRow(getCurrentWebRow(), 'verify'); // assign the verification position to the current row
 }
 
 /**
  * Note: This function is a wrapper for assignPositionToRow. It is used to assign publication to the current row.
  */
-function assignPublish() { // assign publication
+function assignPublish() { // eslint-disable-line no-unused-vars
   assignPositionToRow(getCurrentWebRow(), 'publish'); // assign the publication position to the current row
 }
 
@@ -364,10 +343,11 @@ function getJobsForRun(row) {
 
 // MISC FUNCTIONS
 
+
 /**
  * Destroy article schema cache
  */
-function destroyArticleSchemaCache() {
+function destroyArticleSchemaCache() { // eslint-disable-line no-unused-vars
   CacheService.getScriptCache().remove('articleSchema');
   toast('Article schema purged. On next run it will be pulled again.');
 }
@@ -375,7 +355,7 @@ function destroyArticleSchemaCache() {
 /**
  * Destroy user schema cache
  */
-function destroyUserSchemaCache() {
+function destroyUserSchemaCache() { // eslint-disable-line no-unused-vars
   CacheService.getScriptCache().remove('userSchema');
   toast('User schema purged. On next run it will be pulled again.');
 }
