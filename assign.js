@@ -192,12 +192,15 @@ function assignPositionToRow(row, position) {
       } else {
         throw new Error('Assignment cancelled.');
       }
+      break;
     case ui.Button.CANCEL:
       // User clicked "Cancel".
       throw new Error('Assignment cancelled.');
+      break;
     case ui.Button.CLOSE:
       // User clicked X in the title bar.
       throw new Error('Assignment cancelled.');
+      break;
     default:
       throw new Error('Assignment cancelled.');
   }
