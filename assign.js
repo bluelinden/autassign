@@ -1,9 +1,9 @@
 /* eslint-disable max-len */
-// Delligator by Blue Linden
+// Autassign by Blue Linden
 // © 2023 Blue Linden
-// The sole licensee with commercial rights is The Verdict; All other entities using this
-// system must use it in a non commercial manner, as per CC BY-NC-SA.
+// The sole licensee with commercial rights is The Verdict; All other entities using this system must use it in a non commercial manner, as per CC BY-NC-SA.
 
+const autassignVersion = '1.0';
 
 /**
  * Gets the current selected row on the web
@@ -108,20 +108,18 @@ function fetchUserObjects() {
 }
 
 
-// /**
-//  * @param {number} row
-//  */
-// function assignAllThis(row) {
 
-// }
+/**
 
-// /**
-//  *
-//  * @param {number} row
-//  */
-// function assignAllEvery(row) {
-
-// }
+ */
+function assignAllThis() {
+  // assign all positions to the current row
+  const row = getCurrentWebRow();
+  assignPositionToRow(row, 'transfer');
+  assignPositionToRow(row, 'art');
+  assignPositionToRow(row, 'verify');
+  assignPositionToRow(row, 'publish');
+}
 
 /**
  *
@@ -200,6 +198,37 @@ function assignPositionToRow(row, position) {
 
   console.info('article:', JSON.stringify(article));
 }
+
+/**
+ * @param {object} user
+ * @param {object} article
+ * @param {string} position
+ * @description assign a user to an article
+ * @return {void}
+ * @throws {Error}
+ */
+function assignUserToArticle(user, article, position) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the current spreadsheet and dump it into an object
+  const row = article.row; // get the row number
+  // put the user's name in the appropriate column
+  switch (position) {
+    case 'transfer':
+      sheet.getRange('\'Web Team\'!Q' + row).setValue(user.name);
+      break;
+    case 'art':
+      sheet.getRange('\'Web Team\'!S' + row).setValue(user.name);
+      break;
+    case 'verify':
+      sheet.getRange('\'Web Team\'!U' + row).setValue(user.name);
+      break;
+    case 'publish':
+      sheet.getRange('\'Web Team\'!W' + row).setValue(user.name);
+      break;
+    default:
+      throw new Error('Autassign: Internal: Invalid position.');
+  }
+}
+
 
 /**
  *
@@ -366,4 +395,11 @@ function destroyUserSchemaCache() { // eslint-disable-line no-unused-vars
   toast('User schema purged. On next run it will be pulled again.');
 }
 
-
+/**
+ * About Autassign
+ * @return {void}
+ */
+function aboutAutassign() { // eslint-disable-line no-unused-vars
+  const ui = SpreadsheetApp.getUi();
+  ui.alert('About Autoassign', 'Autoassign is a script that automatically assigns web article tasks to users based on their skill level and current workload. The tool is maintained by Blue Linden. Tool version is ' + autassignVersion, ui.ButtonSet.OK);
+}

@@ -14,7 +14,6 @@ function onOpen() { // eslint-disable-line no-unused-vars
       .addToUi();
   ui.createMenu('Assign')
       .addItem('All to This Article', 'assignAllThis' )
-      .addItem('All to Every Article', 'assignAllEvery')
       .addSeparator()
       .addSubMenu(ui.createMenu('To this article')
           .addItem('Transfer', 'assignTransfer')
@@ -28,6 +27,8 @@ function onOpen() { // eslint-disable-line no-unused-vars
           .addSeparator()
           .addItem('Web Team cache', 'grabUsers')
           .addItem('Statistics', 'grabStatistics'))
+      .addSeparator()
+      .addItem('About...', 'aboutAutassign')
       .addToUi();
 }
 
