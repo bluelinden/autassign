@@ -163,7 +163,7 @@ function assignPositionToRow(row, position) {
   }
   // pop up a dialog box with the top users, allowing you to pick one
   const ui = SpreadsheetApp.getUi();
-  const result = ui.dialog('Assigning ' + position + ' to ' + article.name, 'The top users are ' + getUserStr(topUser) + ', ' + getUserStr(secondUser) + ', ' + getUserStr(thirdUser) + ', and ' + getUserStr(fourthUser) + '. Who should be assigned? Type a number 1-4 or 0 to cancel.', ui.ButtonSet.OK_CANCEL);
+  const result = ui.prompt('Autassign', 'Assigning ' + position + ' to ' + article.name, 'The top users are ' + getUserStr(topUser) + ', ' + getUserStr(secondUser) + ', ' + getUserStr(thirdUser) + ', and ' + getUserStr(fourthUser) + '. Who should be assigned? Type a number 1-4 or 0 to cancel.', ui.ButtonSet.OK_CANCEL);
   // Process the user's response.
   const button = result.getSelectedButton();
   const text = result.getResponseText();
