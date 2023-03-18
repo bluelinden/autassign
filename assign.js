@@ -3,7 +3,7 @@
 // © 2023 Blue Linden
 // The sole licensee with commercial rights is The Verdict; All other entities using this system must use it in a non commercial manner, as per CC BY-NC-SA.
 
-const autassignVersion = '1.0';
+const autassignVersion = '2023.3.4';
 
 /**
  * Gets the current selected row on the web
@@ -153,7 +153,7 @@ function assignPositionToRow(row, position) {
    * @return {string}
    */
   function getUserStr(user) {
-    return user.name + ' ( with' + user.score + ' points and ' + user.jobCount + ' jobs)';
+    return `${user.name} ( with ${user.score} points and ' + user.jobCount + ' jobs)'`;
   }
   // pop up a dialog box with the top users, allowing you to pick one
   const ui = SpreadsheetApp.getUi();
@@ -169,7 +169,9 @@ function assignPositionToRow(row, position) {
       6. ${getUserStr(scores[5])}
       7. ${getUserStr(scores[6])}
       8. ${getUserStr(scores[7])}
-      Who should be assigned? Type a number 1-8 or 0 to cancel.`,
+
+      Who should be assigned? Type a number 1-8 or 0 to cancel.
+      (Autassign is open-source and maintained by blue linden.)`,
       ui.ButtonSet.OK_CANCEL,
   );
   // Process the user's response.
@@ -229,7 +231,7 @@ function assignUserToArticle(user, article, position) {
       sheet.getRange('\'Web Team\'!W' + row).setValue(user.name);
       break;
     default:
-      throw new Error('Autassign: Internal: Invalid position.');
+      throw new Error('Autassign: Applying: Invalid position.');
   }
 }
 
@@ -295,6 +297,9 @@ function calculateScores(job, article, userArray, jobArray) {
         (job == 'publish' && !element.canPublish)) { // if the user can't do article publication
       user.score = 0; // set the user's score to zero
     }
+
+    //round the user score to one decimal place
+    user.score = Math.round(user.score * 10) / 10;
 
     console.info('user', user.name, 'jobscore', user.jobScore, 'jobcount', user.jobCount, 'jobstotal', jobs.jobCount, 'diff', user.diffScore, 'score', user.score); // log the user's score and other details
   });
