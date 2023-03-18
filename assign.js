@@ -94,7 +94,7 @@ function fetchUserObjects() {
     CacheService.getScriptCache().put('userSchema', schema.toString(), 21600); // cache the schema for 6 hours
   }
 
-  const rawUserDataArray = sheet.getRange('\'Web Team\'!A2:P1000').getValues(); // get the user data from the sheet
+  const rawUserDataArray = sheet.getRange('\'Web Team\'!A2:Q1000').getValues(); // get the user data from the sheet
   const userData = rawUserDataArray.filter((e) => e.length); // filter out the empty rows
   const users = []; // define the users array
   userData.forEach((element) => { // for each user in the user data,
@@ -153,7 +153,7 @@ function assignPositionToRow(row, position) {
    * @return {string}
    */
   function getUserStr(user) {
-    return `${user.name} ( with ${user.score} points and ' + user.jobCount + ' jobs)'`;
+    return `${user.name} (with ${user.score} points and ${user.jobCount} jobs)`;
   }
   // pop up a dialog box with the top users, allowing you to pick one
   const ui = SpreadsheetApp.getUi();
@@ -219,16 +219,16 @@ function assignUserToArticle(user, article, position) {
   // put the user's name in the appropriate column
   switch (position) {
     case 'transfer':
-      sheet.getRange('\'Web Team\'!Q' + row).setValue(user.name);
+      sheet.getRange('\'Website\'!Q' + row).setValue(user.name);
       break;
     case 'art':
-      sheet.getRange('\'Web Team\'!S' + row).setValue(user.name);
+      sheet.getRange('\'Website\'!S' + row).setValue(user.name);
       break;
     case 'verify':
-      sheet.getRange('\'Web Team\'!U' + row).setValue(user.name);
+      sheet.getRange('\'Website\'!U' + row).setValue(user.name);
       break;
     case 'publish':
-      sheet.getRange('\'Web Team\'!W' + row).setValue(user.name);
+      sheet.getRange('\'Website\'!W' + row).setValue(user.name);
       break;
     default:
       throw new Error('Autassign: Applying: Invalid position.');
@@ -280,7 +280,7 @@ function calculateScores(job, article, userArray, jobArray) {
       }
     });
 
-    user.jobScore = 1 - (user.dogpile/100) - ((user.jobCount * 6) / jobs.jobCount); // calculate the job score
+    user.jobScore = 1 - ((user.jobCount * 6) / jobs.jobCount) - (user.dogPile/100); // calculate the job score
     user.diffScore = (user.skill / 100) - (article.diff.number / 15); // calculate the difficulty score
     user.score = 100 * (user.jobScore + (0.08 * user.diffScore)); // calculate the total score
 
@@ -298,7 +298,7 @@ function calculateScores(job, article, userArray, jobArray) {
       user.score = 0; // set the user's score to zero
     }
 
-    //round the user score to one decimal place
+    // round the user score to one decimal place
     user.score = Math.round(user.score * 10) / 10;
 
     console.info('user', user.name, 'jobscore', user.jobScore, 'jobcount', user.jobCount, 'jobstotal', jobs.jobCount, 'diff', user.diffScore, 'score', user.score); // log the user's score and other details
