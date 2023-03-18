@@ -31,26 +31,3 @@ function onOpen() { // eslint-disable-line no-unused-vars
       .addItem('About...', 'aboutAutassign')
       .addToUi();
 }
-
-/**
- * @function findInColumn
- * @description Finds the row number of a given value in a given column.
- * @param {object} sheet - The sheet to search.
- * @param {string} column - The column to search.
- * @param {string} data - The data to search for.
- * @return {number} - The row number of the data.
- * @throws {Error}
- */
-function findInColumn(sheet, column, data) {
-  const columnData = sheet.getRange(column + ':' + column); // like A:A
-  const values = columnData.getValues();
-  let row = 0;
-
-  while (values[row] && values[row][0] !== data) {
-    row++;
-  }
-
-  if (values[row][0] === data) return row + 1;
-  else throw new Error('Internal: Could not find ' + data + ' in column ' + column + '.');
-}
-

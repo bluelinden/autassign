@@ -11,11 +11,11 @@ function doIngest() {
   const edActiveRange = editorial.getActiveRange();
   const edRow = edActiveRange.getRowIndex();
   const edValues = {};
-  const pubNumber = editorial.getRange(edRow, 9).getValue();
+  const pubNumber = editorial.getRange(edRow, 10).getValue();
   edValues.name = sheet.getRange('A' + edRow).getValue();
-  edValues.source = sheet.getRange('B' + edRow).getValue();
-  edValues.author = sheet.getRange('C' + edRow).getValue();
-  edValues.webStatus = sheet.getRange('G' + edRow).getValue();
+  edValues.source = sheet.getRange('D' + edRow).getValue();
+  edValues.author = sheet.getRange('E' + edRow).getValue();
+  edValues.webStatus = sheet.getRange('J' + edRow).getValue();
   SpreadsheetApp.setActiveSheet(website, true);
   const active = sheet.getActiveSheet();
   const webRow = findInColumn(website, 'AB', pubNumber);
