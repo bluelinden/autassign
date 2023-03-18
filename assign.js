@@ -153,7 +153,11 @@ function assignPositionToRow(row, position) {
    * @return {string}
    */
   function getUserStr(user) {
-    return `${user.name} (with ${user.score} points and ${user.jobCount} jobs)`;
+    if (user.score == -32767) {
+      return `${user.name} (ineligible)`;
+    } else 
+      return `${user.name} (with ${user.score} points and ${user.jobCount} jobs)`;
+    }
   }
   // pop up a dialog box with the top users, allowing you to pick one
   const ui = SpreadsheetApp.getUi();
@@ -294,11 +298,11 @@ function calculateScores(job, article, userArray, jobArray) {
     }
 
 
-    if ((job == 'transfer' && !element.canTransfer) || // if the user can't do article transfers
-        (job == 'art' && !element.doesArticleArt) || // if the user can't do article art
-        (job == 'verify' && !element.canVerify) || // if the user can't do article verification
-        (job == 'publish' && !element.canPublish)) { // if the user can't do article publication
-      user.score = -9999.9; // set the user's score to negative thirty thousand
+    if ((job == 'transfer' && !user.canTransfer) || // if the user can't do article transfers
+        (job == 'art' && !user.doesArticleArt) || // if the user can't do article art
+        (job == 'verify' && !user.canVerify) || // if the user can't do article verification
+        (job == 'publish' && !user.canPublish)) { // if the user can't do article publication
+      user.score = -32767 // set the user's score to negative thirty thousand
     }
 
     // round the user score to one decimal place
