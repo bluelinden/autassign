@@ -55,6 +55,7 @@ function doCleanIngest() { // eslint-disable-line no-unused-vars
 function doRemove() { // eslint-disable-line no-unused-vars
   SpreadsheetApp.getUi() // Or DocumentApp or FormApp.
       .alert('This will clear the destination row.');
+  // clear the row that would otherwise be the destination row.
 }
 
 /**

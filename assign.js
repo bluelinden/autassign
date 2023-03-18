@@ -169,27 +169,33 @@ function assignPositionToRow(row, position) {
   // Process the user's response.
   const button = result.getSelectedButton();
   const text = result.getResponseText();
-  if (button == ui.Button.OK) {
+  switch (button) {
+    case ui.Button.OK:
     // User clicked "OK".
-    if (text == '1') {
-      assignUserToArticle(topUser, article, position);
-    } else if (text == '2') {
-      assignUserToArticle(secondUser, article, position);
-    } else if (text == '3') {
-      assignUserToArticle(thirdUser, article, position);
-    } else if (text == '4') {
-      assignUserToArticle(fourthUser, article, position);
-    } else if (text == '0') {
-      // do nothing
-    } else {
-      ui.alert('Invalid input. Please try again.');
-    }
-  } else if (button == ui.Button.CANCEL) {
-    // User clicked "Cancel".
-    throw new Error('Assignment cancelled.');
-  } else if (button == ui.Button.CLOSE) {
-    // User clicked X in the title bar.
-    throw new Error('Assignment cancelled.');
+      switch (text) {
+        case '1':
+          assignUserToArticle(topUser, article, position);
+          break;
+        case '2':
+          assignUserToArticle(secondUser, article, position);
+          break;
+        case '3':
+          assignUserToArticle(thirdUser, article, position);
+          break;
+        case '4':
+          assignUserToArticle(fourthUser, article, position);
+          break;
+        default:
+          throw new Error('Assignment cancelled.');
+      }
+    case ui.Button.CANCEL:
+      // User clicked "Cancel".
+      throw new Error('Assignment cancelled.');
+    case ui.Button.CLOSE:
+      // User clicked X in the title bar.
+      throw new Error('Assignment cancelled.');
+    default:
+      throw new Error('Assignment cancelled.');
   }
 
   console.info('article:', JSON.stringify(article));
