@@ -108,7 +108,6 @@ function fetchUserObjects() {
 }
 
 
-
 /**
 
  */
@@ -147,11 +146,6 @@ function assignPositionToRow(row, position) {
     return 0;
   }
   scores.sort( compareScores ); // sort the scores
-  // get the user with the highest object score
-  const topUser = scores[0];
-  const secondUser = scores[1];
-  const thirdUser = scores[2];
-  const fourthUser = scores[3];
 
   /**
    *
@@ -163,28 +157,38 @@ function assignPositionToRow(row, position) {
   }
   // pop up a dialog box with the top users, allowing you to pick one
   const ui = SpreadsheetApp.getUi();
-  const result = ui.prompt('Assigning ' + position + ' to ' + article.name, 'The top users are ' + getUserStr(topUser) + ', ' + getUserStr(secondUser) + ', ' + getUserStr(thirdUser) + ', and ' + getUserStr(fourthUser) + '. Who should be assigned? Type a number 1-4 or 0 to cancel.', ui.ButtonSet.OK_CANCEL);
+  const result = ui.prompt(
+      `Assigning ${position} to ${article.name}`,
+
+      `The top users are:
+      1. ${getUserStr(scores[0])}
+      2. ${getUserStr(scores[1])}
+      3. ${getUserStr(scores[2])}
+      4. ${getUserStr(scores[3])}
+      5. ${getUserStr(scores[4])}
+      6. ${getUserStr(scores[5])}
+      7. ${getUserStr(scores[6])}
+      8. ${getUserStr(scores[7])}
+      Who should be assigned? Type a number 1-8 or 0 to cancel.`,
+      ui.ButtonSet.OK_CANCEL,
+  );
   // Process the user's response.
   const button = result.getSelectedButton();
   const text = result.getResponseText();
+  console.info('button:', button, 'text:', text);
   switch (button) {
     case ui.Button.OK:
     // User clicked "OK".
-      switch (text) {
-        case '1':
-          assignUserToArticle(topUser, article, position);
-          break;
-        case '2':
-          assignUserToArticle(secondUser, article, position);
-          break;
-        case '3':
-          assignUserToArticle(thirdUser, article, position);
-          break;
-        case '4':
-          assignUserToArticle(fourthUser, article, position);
-          break;
-        default:
+      if (text) {
+        const userArrayPosition = parseInt(text, 10) - 1;
+        if (userArrayPosition >= -1 && userArrayPosition < 7) {
+          const userPicked = scores[userArrayPosition];
+          assignUserToArticle(userPicked, article, position);
+        } else {
           throw new Error('Assignment cancelled.');
+        }
+      } else {
+        throw new Error('Assignment cancelled.');
       }
     case ui.Button.CANCEL:
       // User clicked "Cancel".
@@ -274,7 +278,7 @@ function calculateScores(job, article, userArray, jobArray) {
       }
     });
 
-    user.jobScore = 1 - ((user.jobCount * 6) / jobs.jobCount); // calculate the job score
+    user.jobScore = 1 - (user.dogpile/100) - ((user.jobCount * 6) / jobs.jobCount); // calculate the job score
     user.diffScore = (user.skill / 100) - (article.diff.number / 15); // calculate the difficulty score
     user.score = 100 * (user.jobScore + (0.08 * user.diffScore)); // calculate the total score
 
