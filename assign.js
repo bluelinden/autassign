@@ -156,7 +156,11 @@ function assignPositionToRow(row, position) {
     if (user.score == -32767) {
       return `${user.name} (ineligible)`;
     } else {
-      return `${user.name} (with ${user.score} points and ${user.jobCount} jobs)`;
+      if (user.jobCount == 1) {
+        return `${user.name} (with ${user.score} points and ${user.jobCount} job)`;
+      } else {
+        return `${user.name} (with ${user.score} points and ${user.jobCount} jobs)`;
+      }
     }
   }
   // pop up a dialog box with the top users, allowing you to pick one
