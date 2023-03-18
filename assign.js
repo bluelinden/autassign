@@ -3,7 +3,7 @@
 // © 2023 Blue Linden
 // The sole licensee with commercial rights is The Verdict; All other entities using this system must use it in a non commercial manner, as per CC BY-NC-SA.
 
-const autassignVersion = '2023.3.4';
+const autassignVersion = '2023.3.5';
 
 /**
  * Gets the current selected row on the web
@@ -187,22 +187,22 @@ function assignPositionToRow(row, position) {
           const userPicked = scores[userArrayPosition];
           assignUserToArticle(userPicked, article, position);
         } else {
-          throw new Error('Assignment cancelled.');
+          toast('Assignment ignored.');
         }
       } else {
-        throw new Error('Assignment cancelled.');
+        toast('Assignment ignored.');
       }
       break;
     case ui.Button.CANCEL:
       // User clicked "Cancel".
-      throw new Error('Assignment cancelled.');
+      toast('Assignment ignored.');
       break;
     case ui.Button.CLOSE:
       // User clicked X in the title bar.
-      throw new Error('Assignment cancelled.');
+      throw new Error('Assignment abandoned, ending autassign session.');
       break;
     default:
-      throw new Error('Assignment cancelled.');
+      toast('Assignment cancelled.');
   }
 
   console.info('article:', JSON.stringify(article));
@@ -298,7 +298,7 @@ function calculateScores(job, article, userArray, jobArray) {
         (job == 'art' && !element.doesArticleArt) || // if the user can't do article art
         (job == 'verify' && !element.canVerify) || // if the user can't do article verification
         (job == 'publish' && !element.canPublish)) { // if the user can't do article publication
-      user.score = 0; // set the user's score to zero
+      user.score = -9999.9; // set the user's score to negative thirty thousand
     }
 
     // round the user score to one decimal place
