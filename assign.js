@@ -189,7 +189,7 @@ function assignPositionToRow(row, position) {
   switch (button) {
     case ui.Button.OK:
     // User clicked "OK".
-      if (text) {
+      if (text && (text !== '0')) {
         const userArrayPosition = parseInt(text, 10) - 1;
         if (userArrayPosition >= -1 && userArrayPosition < 7) {
           const userPicked = scores[userArrayPosition];
