@@ -1,3 +1,4 @@
+ingestVersion = '2023.3.4';
 
 /**
  * @function doIngest
@@ -11,7 +12,7 @@ function doIngest() {
   const edActiveRange = editorial.getActiveRange();
   const edRow = edActiveRange.getRowIndex();
   const edValues = {};
-  const pubNumber = editorial.getRange(edRow, 10).getValue();
+  const pubNumber = editorial.getRange(edRow, 11).getValue();
   edValues.name = sheet.getRange('A' + edRow).getValue();
   edValues.source = sheet.getRange('D' + edRow).getValue();
   edValues.author = sheet.getRange('E' + edRow).getValue();
@@ -66,7 +67,7 @@ function doRemove() { // eslint-disable-line no-unused-vars
  */
 function aboutIngestor() { // eslint-disable-line no-unused-vars
   SpreadsheetApp.getUi()
-      .alert('In-Jester version 0.3.2 by Blue Linden, Web Manager at The Verdict.');
+      .alert(`Autassign Ingest, ver${ingestVersion} by blue linden, Web Manager at The Verdict.`);
 }
 
 

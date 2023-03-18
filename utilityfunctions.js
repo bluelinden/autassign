@@ -116,7 +116,7 @@ function findInColumn(sheet, column, data) {
   while (values[row] && values[row][0] !== data) {
     row++;
   }
-
+  console.info('Found ' + data + ' in column ' + column + ' at row ' + (row + 1) + '.');
   if (values[row][0] === data) return row + 1;
   else throw new Error('Internal: Could not find ' + data + ' in column ' + column + '.');
 }
