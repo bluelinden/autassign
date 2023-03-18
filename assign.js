@@ -155,7 +155,7 @@ function assignPositionToRow(row, position) {
   function getUserStr(user) {
     if (user.score == -32767) {
       return `${user.name} (ineligible)`;
-    } else 
+    } else {
       return `${user.name} (with ${user.score} points and ${user.jobCount} jobs)`;
     }
   }
