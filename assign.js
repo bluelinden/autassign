@@ -421,5 +421,5 @@ function destroyUserSchemaCache() { // eslint-disable-line no-unused-vars
  */
 function aboutAutassign() { // eslint-disable-line no-unused-vars
   const ui = SpreadsheetApp.getUi();
-  ui.alert('About Autoassign', 'Autoassign is a script that automatically assigns web article tasks to users based on their skill level and current workload. The tool is maintained by Blue Linden. Tool version is ' + autassignVersion, ui.ButtonSet.OK);
+  ui.alert('About Autassign', 'Autassign is a script that automatically assigns web article tasks to users based on their skill level and current workload. The tool is maintained by Blue Linden. Tool version is ' + autassignVersion, ui.ButtonSet.OK);
 }
