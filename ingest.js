@@ -1,11 +1,10 @@
-ingestVersion = '2023.3.4';
+ingestVersion = '2023.3.5';
 
 /**
  * @function doIngest
  * @description Moves values from the Editorial sheet to the Website sheet.
  */
 function doIngest() {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet();
   const editorial = sheet.getSheetByName('Editorial');
   const website = sheet.getSheetByName('Website');
   SpreadsheetApp.setActiveSheet(editorial, true);
@@ -13,18 +12,17 @@ function doIngest() {
   const edRow = edActiveRange.getRowIndex();
   const edValues = {};
   const pubNumber = editorial.getRange(edRow, 11).getValue();
-  edValues.name = sheet.getRange('A' + edRow).getValue();
-  edValues.source = sheet.getRange('D' + edRow).getValue();
-  edValues.author = sheet.getRange('E' + edRow).getValue();
-  edValues.webStatus = sheet.getRange('J' + edRow).getValue();
-  SpreadsheetApp.setActiveSheet(website, true);
-  const active = sheet.getActiveSheet();
+  edValues.name = editorial.getRange('A' + edRow).getValue();
+  edValues.run = editorial.getRange('B' + edRow).getValue();
+  edValues.source = editorial.getRange('D' + edRow).getValue();
+  edValues.author = editorial.getRange('E' + edRow).getValue();
+  edValues.webStatus = editorial.getRange('J' + edRow).getValue();
   const webRow = findInColumn(website, 'AB', pubNumber);
-  active.getRange('J' + webRow).setValue(edValues.name);
-  active.getRange('L' + webRow).setValue(edValues.author);
-  active.getRange('M' + webRow).setValue(edValues.webStatus);
-  active.getRange('AA' + webRow).setValue(edValues.source);
-  SpreadsheetApp.setActiveSheet(editorial, true);
+  website.getRange('J' + webRow).setValue(edValues.name);
+  website.getRange('K' + webRow).setValue(edValues.run);
+  website.getRange('L' + webRow).setValue(edValues.author);
+  website.getRange('M' + webRow).setValue(edValues.webStatus);
+  website.getRange('AA' + webRow).setValue(edValues.source);
 }
 
 /**
