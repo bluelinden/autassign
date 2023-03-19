@@ -3,7 +3,7 @@
 // © 2023 Blue Linden
 // The sole licensee with commercial rights is The Verdict; All other entities using this system must use it in a non commercial manner, as per CC BY-NC-SA.
 
-const autassignVersion = '2023.3.5';
+const autassignVersion = '2023.3.6';
 
 /**
  * Gets the current selected row on the web
