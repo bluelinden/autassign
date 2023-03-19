@@ -5,6 +5,7 @@ ingestVersion = '2023.3.5';
  * @description Moves values from the Editorial sheet to the Website sheet.
  */
 function doIngest() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet();
   const editorial = sheet.getSheetByName('Editorial');
   const website = sheet.getSheetByName('Website');
   SpreadsheetApp.setActiveSheet(editorial, true);
