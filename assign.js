@@ -225,21 +225,27 @@ function assignPositionToRow(row, position) {
  * @throws {Error}
  */
 function assignUserToArticle(user, article, position) {
+  const assignmentText = `${user.name}`;
+  const assignmentNote = `${Session.getActiveUser().getEmail()} used autassign on ${new Date().toLocaleString()}.`;
   const sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the current spreadsheet and dump it into an object
   const row = article.row; // get the row number
   // put the user's name in the appropriate column
   switch (position) {
     case 'transfer':
-      sheet.getRange('\'Website\'!Q' + row).setValue(user.name);
+      sheet.getRange('\'Website\'!Q' + row).setValue(assignmentText);
+      sheet.getRange('\'Website\'!R' + row).setNote(assignmentNote);
       break;
     case 'art':
-      sheet.getRange('\'Website\'!S' + row).setValue(user.name);
+      sheet.getRange('\'Website\'!S' + row).setValue(assignmentText);
+      sheet.getRange('\'Website\'!T' + row).setNote(assignmentNote);
       break;
     case 'verify':
-      sheet.getRange('\'Website\'!U' + row).setValue(user.name);
+      sheet.getRange('\'Website\'!U' + row).setValue(assignmentText);
+      sheet.getRange('\'Website\'!V' + row).setNote(assignmentNote);
       break;
     case 'publish':
-      sheet.getRange('\'Website\'!W' + row).setValue(user.name);
+      sheet.getRange('\'Website\'!W' + row).setValue(assignmentText);
+      sheet.getRange('\'Website\'!X' + row).setNote(assignmentNote);
       break;
     default:
       throw new Error('Autassign: Applying: Invalid position.');
