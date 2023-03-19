@@ -67,7 +67,7 @@ function doRemove() { // eslint-disable-line no-unused-vars
  */
 function aboutIngestor() { // eslint-disable-line no-unused-vars
   SpreadsheetApp.getUi()
-      .alert(`Autassign Ingest, ver${ingestVersion} by blue linden, Web Manager at The Verdict.`);
+      .alert(`Autassign Ingest, ver ${ingestVersion} by blue linden, Web Manager at The Verdict.`);
 }
 
 
