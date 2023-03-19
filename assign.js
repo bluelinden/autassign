@@ -84,27 +84,33 @@ function getArticleObject(rowNum) {
  * @return {object} jobs
  */
 function fetchUserObjects() {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the current spreadsheet and dump it into an object
-  let schema; // define the schema variable
-  if (CacheService.getScriptCache().get('userSchema')) { // if the user schema is cached
-    schema = CacheService.getScriptCache().get('userSchema').split(','); // get the user schema from the cache
-  } else {
-    const schemaStr = sheet.getRangeByName('userSchema').getValue(); // get the user schema from the sheet
-    schema = schemaStr.split(','); // split the schema into an array
-    CacheService.getScriptCache().put('userSchema', schema.toString(), 21600); // cache the schema for 6 hours
-  }
+  // fetch users from the cache
+  const cachedUsers = CacheService.getScriptCache().get('users');
+  if (cachedUsers) { // if the users are cached
+    return JSON.parse(cachedUsers); // return the users
+  } else { // if the users are not cached
+    const sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the current spreadsheet and dump it into an object
+    let schema; // define the schema variable
 
-  const rawUserDataArray = sheet.getRange('\'Web Team\'!A2:Q1000').getValues(); // get the user data from the sheet
-  const userData = rawUserDataArray.filter((e) => e.length); // filter out the empty rows
-  const users = []; // define the users array
-  userData.forEach((element) => { // for each user in the user data,
-    const user = userArrayToObject(schema, element); // convert the array into an object
-    if (user.name) { // if the user has a name,
-      users.push(user); // push the user into the users array
+    if (CacheService.getScriptCache().get('userSchema')) { // if the user schema is cached
+      schema = CacheService.getScriptCache().get('userSchema').split(','); // get the user schema from the cache
+    } else {
+      const schemaStr = sheet.getRangeByName('userSchema').getValue(); // get the user schema from the sheet
+      schema = schemaStr.split(','); // split the schema into an array
+      CacheService.getScriptCache().put('userSchema', schema.toString(), 21600); // cache the schema for 6 hours
     }
-  });
-
-  return users; // return the users array
+    const rawUserDataArray = sheet.getRange('\'Web Team\'!A2:Q1000').getValues(); // get the user data from the sheet
+    const userData = rawUserDataArray.filter((e) => e.length); // filter out the empty rows
+    const users = []; // define the users array
+    userData.forEach((element) => { // for each user in the user data,
+      const user = userArrayToObject(schema, element); // convert the array into an object
+      if (user.name) { // if the user has a name,
+        users.push(user); // push the user into the users array
+      }
+    });
+    CacheService.getScriptCache().put('users', JSON.stringify(users), 21600); // cache the users for 6 hours
+    return users; // return the users array
+  }
 }
 
 
