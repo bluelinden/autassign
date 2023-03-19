@@ -376,7 +376,6 @@ function assignPublish() { // eslint-disable-line no-unused-vars
  * @return {array}
  */
 function getJobsForRun(row) {
-  row = 12;
   const issueColumn = 'K';
   const assignColumnStart = 'Q'; const assignColumnEnd = 'X';
   const schema = ['transfer', 'transferDone', 'art', 'artDone', 'verify', 'verifyDone', 'publish', 'publishDone'];
