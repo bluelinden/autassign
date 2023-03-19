@@ -4,7 +4,7 @@ ingestVersion = '2023.3.5';
  * @function doIngest
  * @description Moves values from the Editorial sheet to the Website sheet.
  */
-function doIngest() {
+function doIngest() { // eslint-disable-line no-unused-vars
   const sheet = SpreadsheetApp.getActiveSpreadsheet();
   const editorial = sheet.getSheetByName('Editorial');
   const website = sheet.getSheetByName('Website');
@@ -30,7 +30,7 @@ function doIngest() {
  * @function doSafeIngest
  * @description Moves values from the Editorial sheet to the Website sheet, but only if the destination value is empty. Otherwise, it leaves the destination value alone.
  */
-function doSafeIngest() {
+function doSafeIngest() { // eslint-disable-line no-unused-vars
   SpreadsheetApp.getUi() // Or DocumentApp or FormApp.
       .alert('I haven\'t implemented this yet. This will move values from this sheet and dump them into the Website sheet. It will do so without changing any data that is already present.');
 }

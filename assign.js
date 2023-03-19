@@ -3,7 +3,7 @@
 // © 2023 Blue Linden
 // The sole licensee with commercial rights is The Verdict; All other entities using this system must use it in a non commercial manner, as per CC BY-NC-SA.
 
-const autassignVersion = '2023.3.6';
+const autassignVersion = '2023.3.7';
 
 /**
  * Gets the current selected row on the web
@@ -82,11 +82,12 @@ function getArticleObject(rowNum) {
 /**
  *
  * @return {object} jobs
+ * @param {boolean} forceRevalidate
  */
-function fetchUserObjects() {
+function fetchUserObjects(forceRevalidate) {
   // fetch users from the cache
   const cachedUsers = CacheService.getScriptCache().get('users');
-  if (cachedUsers) { // if the users are cached
+  if (cachedUsers && !forceRevalidate) { // if the users are cached and we don't want to revalidate
     return JSON.parse(cachedUsers); // return the users
   } else { // if the users are not cached
     const sheet = SpreadsheetApp.getActiveSpreadsheet(); // get the current spreadsheet and dump it into an object
@@ -117,7 +118,7 @@ function fetchUserObjects() {
 /**
 
  */
-function assignAllThis() {
+function assignAllThis() { // eslint-disable-line no-unused-vars
   // assign all positions to the current row
   const row = getCurrentWebRow();
   assignPositionToRow(row, 'transfer');
@@ -318,7 +319,7 @@ function calculateScores(job, article, userArray, jobArray) {
         (job == 'art' && !user.doesArticleArt) || // if the user can't do article art
         (job == 'verify' && !user.canVerify) || // if the user can't do article verification
         (job == 'publish' && !user.canPublish)) { // if the user can't do article publication
-      user.score = -32767 // set the user's score to negative thirty thousand
+      user.score = -32767; // set the user's score to negative thirty thousand
     }
 
     // round the user score to one decimal place
@@ -433,4 +434,11 @@ function destroyUserSchemaCache() { // eslint-disable-line no-unused-vars
 function aboutAutassign() { // eslint-disable-line no-unused-vars
   const ui = SpreadsheetApp.getUi();
   ui.alert('About Autassign', 'Autassign is a script that automatically assigns web article tasks to users based on their skill level and current workload. The tool is maintained by Blue Linden. Tool version is ' + autassignVersion, ui.ButtonSet.OK);
+}
+
+/**
+ * Refresh user cache
+ */
+function grabUsers() { // eslint-disable-line no-unused-vars
+  fetchUserObjects(true);
 }
