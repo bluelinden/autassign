@@ -233,19 +233,19 @@ function assignUserToArticle(user, article, position) {
   switch (position) {
     case 'transfer':
       sheet.getRange('\'Website\'!Q' + row).setValue(assignmentText);
-      sheet.getRange('\'Website\'!R' + row).setNote(assignmentNote);
+      sheet.getRange('\'Website\'!Q' + row).setNote(assignmentNote);
       break;
     case 'art':
       sheet.getRange('\'Website\'!S' + row).setValue(assignmentText);
-      sheet.getRange('\'Website\'!T' + row).setNote(assignmentNote);
+      sheet.getRange('\'Website\'!S' + row).setNote(assignmentNote);
       break;
     case 'verify':
       sheet.getRange('\'Website\'!U' + row).setValue(assignmentText);
-      sheet.getRange('\'Website\'!V' + row).setNote(assignmentNote);
+      sheet.getRange('\'Website\'!U' + row).setNote(assignmentNote);
       break;
     case 'publish':
       sheet.getRange('\'Website\'!W' + row).setValue(assignmentText);
-      sheet.getRange('\'Website\'!X' + row).setNote(assignmentNote);
+      sheet.getRange('\'Website\'!W' + row).setNote(assignmentNote);
       break;
     default:
       throw new Error('Autassign: Applying: Invalid position.');
